@@ -1,0 +1,35 @@
+state: enable
+rule_id : sqli_get_01
+rule_tag: sqli
+rule_name: sqli_get_select
+rule_type:  frequency_or   # frequency_and
+
+detect_list:
+
+  - field : network.ip
+    type: re
+    rule: xxx
+    ignorecase: false
+
+  - field : network.ip
+    type: equal
+    rule : xxx
+
+  - field : network.ip,
+    type: in
+    rule : xxx
+
+key : network.ip
+
+time_interval:
+   second: 10
+   times: 100
+
+
+threat_level : high
+auth : njcx
+info : about sql injection attack
+
+e-mail:
+    - njcx91@tom.com
+    - njcx91@tom.com

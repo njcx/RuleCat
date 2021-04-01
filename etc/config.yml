@@ -1,0 +1,71 @@
+name: rule_engine
+
+env: dev  # 环境 dev demo prod
+
+#log-path : /var/log
+
+
+input:
+     kafka:
+       enabled : true
+       server : ["172.21.129.2:9092"]
+       topic: test
+       group_id: nids_input
+
+
+output:
+    es:
+      enabled : true
+      es_host : ["http://10.10.116.177:9201"]
+      version : 7
+
+    kafka:
+      enabled : true
+      server : ["172.21.129.2:9092"]
+      topic: nids-alert
+      group_id: nids-alert
+
+
+    email:
+      enabled: true
+      email_host: smtp.qq.com
+      email_smtp_port: 465
+      email_from: 123456@qq.com
+      email_username: 123456@qq.com
+      email_pwd: 123456
+
+
+    json:
+      enabled : true
+      path : /tmp
+
+
+
+
+# input.rabbitmq:
+#    enabled : true
+#    server : "192.168.1.1"
+#    ports : [ 8001, 8001, 8002 ]
+
+# input.redis:
+#    enabled : true
+#    server : "192.168.1.1"
+#    ports : 6379
+#    password : ""
+
+
+#
+#    [output.redis]
+#    enabled : true
+#    server : "192.168.1.1"
+#    ports : 6379
+#    password : ""
+
+#    [output.rabbitmq]
+#    enabled : true
+
+
+
+
+
+

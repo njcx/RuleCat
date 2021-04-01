@@ -1,0 +1,34 @@
+state: enable
+rule_id : sqli_get_01
+rule_tag: sqli
+rule_name: sqli_get_select
+rule_type: or
+
+detect_list:
+
+  - field : conn.conn_state
+    type: re
+    rule: S0
+    ignorecase: false
+
+  - field : conn.proto
+    type: equal
+    rule : tcp
+
+  - field : conn.conn_state
+    type: in
+    rule : S0
+
+  - field: conn.ip
+    type: customf
+    rule: CheckIP
+
+
+threat_level : high
+auth : njcx
+info : about sql injection attack
+
+e-mail:
+    - njcx86@gmail.com
+    - njcx91@tom.com
+

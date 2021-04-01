@@ -1,0 +1,30 @@
+state: enable
+rule_id : sqli_get_01
+rule_tag: sqli
+rule_name: sqli_get_select
+rule_type: and
+
+detect_list:
+
+  - field : name.first
+    type: re
+    rule: J
+    ignorecase: false
+
+  - field : name.first
+    type: equal
+    rule : Janet
+
+  - field : name.name
+    type: in
+    rule : Prichard
+
+
+threat_level : high
+auth : njcx
+info : about sql injection attack
+
+e-mail:
+    - njcx91@tom.com
+    - njcx91@tom.com
+
