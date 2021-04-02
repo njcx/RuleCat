@@ -5,12 +5,12 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"regexp"
-	"rule_engine_by_go/app/customf"
-	"rule_engine_by_go/utils"
-	"rule_engine_by_go/utils/cache"
-	"rule_engine_by_go/utils/json"
-	log2 "rule_engine_by_go/utils/log"
-	"rule_engine_by_go/utils/workerpool"
+	"rulecat/app/customf"
+	"rulecat/utils"
+	"rulecat/utils/cache"
+	"rulecat/utils/json"
+	log2 "rulecat/utils/log"
+	"rulecat/utils/workerpool"
 	"strings"
 	"sync"
 	"time"
@@ -37,7 +37,6 @@ func (e *engine) ReadRules() {
 	if err != nil {
 		log2.Error.Fatalf("Get rule file dir err %s  %v ", rulesListPath, err)
 	}
-
 	for _, ruleFile := range rulesListPath {
 		rule, err := ioutil.ReadFile(ruleFile)
 

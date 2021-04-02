@@ -3,7 +3,7 @@ package email
 import (
 	"crypto/tls"
 	"github.com/go-gomail/gomail"
-	log2 "rule_engine_by_go/utils/log"
+	log2 "rulecat/utils/log"
 )
 
 type EmailConf struct {

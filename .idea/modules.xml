@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/rule_engine_by_go.iml" filepath="$PROJECT_DIR$/.idea/rule_engine_by_go.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/rulecat.iml" filepath="$PROJECT_DIR$/.idea/rulecat.iml" />
     </modules>
   </component>
 </project>

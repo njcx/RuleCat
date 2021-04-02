@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"rule_engine_by_go/app"
-	"rule_engine_by_go/utils/kafka"
+	"rulecat/app"
+	"rulecat/utils/kafka"
 	"time"
 )
 

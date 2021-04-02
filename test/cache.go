@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"rule_engine_by_go/utils/cache"
+	"rulecat/utils/cache"
 	"time"
 )
 

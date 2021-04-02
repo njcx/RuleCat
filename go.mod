@@ -1,4 +1,4 @@
-module rule_engine_by_go
+module rulecat
 
 go 1.14
 

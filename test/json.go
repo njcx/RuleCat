@@ -1,6 +1,6 @@
 package main
 
-import "rule_engine_by_go/utils/json"
+import "rulecat/utils/json"
 
 const json_ = `{"name":{"first":"Janet","name":"Prichard"},"age":47}`
 

@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"rule_engine_by_go/utils"
+	"rulecat/utils"
 
-	log2 "rule_engine_by_go/utils/log"
+	log2 "rulecat/utils/log"
 
 	"gopkg.in/yaml.v2"
 )

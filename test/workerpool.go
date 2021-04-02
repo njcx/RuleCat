@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	conc "rule_engine_by_go/utils/workerpool"
+	conc "rulecat/utils/workerpool"
 	"runtime"
 
 	//"runtime"

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"rule_engine_by_go/app"
+	"rulecat/app"
 )
 
 type Employee struct {

@@ -5,11 +5,11 @@ import (
 	"gopkg.in/yaml.v2"
 	"html/template"
 	"io/ioutil"
-	"rule_engine_by_go/utils"
-	"rule_engine_by_go/utils/email"
-	"rule_engine_by_go/utils/es"
-	"rule_engine_by_go/utils/kafka"
-	log2 "rule_engine_by_go/utils/log"
+	"rulecat/utils"
+	"rulecat/utils/email"
+	"rulecat/utils/es"
+	"rulecat/utils/kafka"
+	log2 "rulecat/utils/log"
 	"sync"
 )
 

@@ -1,12 +1,12 @@
 package main
 
 import (
-"fmt"
-//"rule_engine_by_go/utils/mq"
+	"fmt"
+	//"rulecat/utils/mq"
 )
 
 type TestPro struct {
-	msgContent   string
+	msgContent string
 }
 
 // 实现发送者

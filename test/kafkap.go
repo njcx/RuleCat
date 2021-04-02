@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"rule_engine_by_go/utils/kafka"
+	"rulecat/utils/kafka"
 )
 
 type Employee struct {
