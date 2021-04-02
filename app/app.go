@@ -45,6 +45,7 @@ type Output struct {
 	Json struct {
 		Enabled bool   `yaml:"enabled"`
 		Path    string `yaml:"path"`
+		Name    string `yaml:"name"`
 	}
 	Email struct {
 		Enabled       bool   `yaml:"enabled"`
@@ -89,7 +90,8 @@ func init() {
 }
 
 func SendMail(data *sync.Map) {
-	tmp := `<html><head><meta charset="utf-8"></head><body>
+	if ConfigG.OutPut.Email.Enabled {
+		tmp := `<html><head><meta charset="utf-8"></head><body>
          <h3> RuleName:  {{.Data_.rule_name}}</h3>
          <h3> RuleId:     {{.Data_.rule_id}}</h3>
          <h3> RuleTag:    {{.Data_.rule_tag}}</h3>
@@ -98,42 +100,56 @@ func SendMail(data *sync.Map) {
          <h4> Data:</h4>
          <pre id="out_pre"> {{.Json}} </pre>
          </body></html>`
-	type Args struct {
-		Data_ map[interface{}]interface{}
-		Json  template.HTML
-	}
-	Data := utils.SMapToMap(data)
-	Json, _ := Json1.Marshal(Data["data"])
-	Data1 := Args{Data_: Data, Json: template.HTML(utils.FormatJson(Json))}
-	t := template.Must(template.New("mail").Parse(tmp))
-	var tpl bytes.Buffer
-	err := t.Execute(&tpl, Data1)
-	if err != nil {
-		log2.Error.Printf("Email template parse err: %v ", err)
-		err = nil
-	}
-	eAddr := []string{}
-	for _, v := range Data["e-mail"].([]interface{}) {
-		eAddr = append(eAddr, v.(string))
-	}
-	to := email.ToSomeBody{To: eAddr, Cc: eAddr}
-	err = emailSender.SendEmail(&to, "NIDS-Alert-"+Data["rule_name"].(string), tpl.String())
-	if err != nil {
-		log2.Error.Printf("Email send err: %v ", err)
+		type Args struct {
+			Data_ map[interface{}]interface{}
+			Json  template.HTML
+		}
+		Data := utils.SMapToMap(data)
+		Json, _ := Json1.Marshal(Data["data"])
+		Data1 := Args{Data_: Data, Json: template.HTML(utils.FormatJson(Json))}
+		t := template.Must(template.New("mail").Parse(tmp))
+		var tpl bytes.Buffer
+		err := t.Execute(&tpl, Data1)
+		if err != nil {
+			log2.Error.Printf("Email template parse err: %v ", err)
+			err = nil
+		}
+		eAddr := []string{}
+		for _, v := range Data["e-mail"].([]interface{}) {
+			eAddr = append(eAddr, v.(string))
+		}
+		to := email.ToSomeBody{To: eAddr, Cc: eAddr}
+		err = emailSender.SendEmail(&to, "NIDS-Alert-"+Data["rule_name"].(string), tpl.String())
+		if err != nil {
+			log2.Error.Printf("Email send err: %v ", err)
+		}
 	}
 
 }
 
 func SendKafka(message []byte) {
-	err := kafkaP.AddMessage(message)
-	if err != nil {
-		log2.Error.Printf("Kafka message Delivery err: %v ", err)
+
+	if ConfigG.OutPut.Kafka.Enabled {
+		err := kafkaP.AddMessage(message)
+		if err != nil {
+			log2.Error.Printf("Kafka message Delivery err: %v ", err)
+		}
 	}
 }
 
 func SendEs(typeName string, namespace string, sinkData string) {
-	err := esSvc.AddBodyString(typeName, namespace, sinkData)
-	if err != nil {
-		log2.Error.Printf("Send es message err: %v ", err)
+
+	if ConfigG.OutPut.Es.Enabled {
+		err := esSvc.AddBodyString(typeName, namespace, sinkData)
+		if err != nil {
+			log2.Error.Printf("Send es message err: %v ", err)
+		}
+	}
+}
+
+func SendJson(message []byte) {
+	if ConfigG.OutPut.Json.Enabled {
+		filePath := ConfigG.OutPut.Json.Path + ConfigG.OutPut.Json.Name
+		utils.WriteFile(filePath, string(message)+"\n")
 	}
 }

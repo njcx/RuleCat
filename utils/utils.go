@@ -108,3 +108,45 @@ func FormatJson(data []byte) string {
 	Json.Indent(&out, data, "", "    ")
 	return out.String()
 }
+
+func WriteFile(path string, str string) {
+	_, b := IsFile(path)
+	var f *os.File
+	var err error
+	if b {
+		f, _ = os.OpenFile(path, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	} else {
+		f, err = os.Create(path)
+	}
+
+	defer func() {
+		err = f.Close()
+		if err != nil {
+			fmt.Println("err = ", err)
+		}
+	}()
+
+	if err != nil {
+		fmt.Println("err = ", err)
+		return
+	}
+	_, err = f.WriteString(str)
+	if err != nil {
+		fmt.Println("err = ", err)
+	}
+}
+
+func IsExists(path string) (os.FileInfo, bool) {
+	f, err := os.Stat(path)
+	return f, err == nil || os.IsExist(err)
+}
+
+func IsDir(path string) (os.FileInfo, bool) {
+	f, flag := IsExists(path)
+	return f, flag && f.IsDir()
+}
+
+func IsFile(path string) (os.FileInfo, bool) {
+	f, flag := IsExists(path)
+	return f, flag && !f.IsDir()
+}

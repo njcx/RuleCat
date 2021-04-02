@@ -37,7 +37,8 @@ output:
 
     json:
       enabled : true
-      path : /tmp
+      path : /tmp/
+      name : nids-alert.log
 
 
 

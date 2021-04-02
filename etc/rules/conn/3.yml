@@ -1,4 +1,4 @@
-state: enable
+state: disable
 rule_id : sqli_get_01
 rule_tag: sqli
 rule_name: sqli_get_select

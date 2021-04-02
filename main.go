@@ -38,6 +38,7 @@ func main() {
 				app.SendKafka(sjson)
 				app.SendEs("nids", "alert", string(sjson))
 				app.SendMail(data)
+				app.SendJson(sjson)
 			}
 		}()
 

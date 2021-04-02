@@ -16,7 +16,7 @@ HandleMap["CheckIP"] = CheckIP
 
 */
 
-type handle func(name string) bool
+type handle func(name interface{}) bool
 
 var HandleMap map[string]handle
 
@@ -26,8 +26,8 @@ func init() {
 
 }
 
-func CheckIP(ip string) bool {
-	if ip == "127.0.0.1" {
+func CheckIP(ip interface{}) bool {
+	if ip.(string) == "172.16.17.11" {
 		return true
 	}
 	return false

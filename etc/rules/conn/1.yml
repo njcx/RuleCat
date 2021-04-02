@@ -19,7 +19,7 @@ detect_list:
     type: in
     rule : S0
 
-  - field: conn.ip
+  - field: conn.id\.resp_h
     type: customf
     rule: CheckIP
 
