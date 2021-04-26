@@ -2,8 +2,6 @@ name: rule_engine
 
 env: dev  # 环境 dev demo prod
 
-#log-path : /var/log
-
 
 input:
      kafka:
@@ -27,7 +25,7 @@ output:
 
 
     email:
-      enabled: true
+      enabled: false
       email_host: smtp.qq.com
       email_smtp_port: 465
       email_from: 123456@qq.com
@@ -43,27 +41,30 @@ output:
 
 
 
-# input.rabbitmq:
-#    enabled : true
-#    server : "192.168.1.1"
-#    ports : [ 8001, 8001, 8002 ]
+# input:
+#    rabbitmq:
+#      enabled : true
+#      server : "192.168.1.1"
+#      ports : [ 8001]
 
-# input.redis:
-#    enabled : true
-#    server : "192.168.1.1"
-#    ports : 6379
-#    password : ""
+
+#    redis:
+#      enabled : true
+#      server : "192.168.1.1"
+#      ports : 6379
+#      password : ""
 
 
 #
-#    [output.redis]
-#    enabled : true
-#    server : "192.168.1.1"
-#    ports : 6379
-#    password : ""
+# output:
+#     redis:
+#        enabled : true
+#        server : "192.168.1.1"
+#        ports : 6379
+#        password : ""
 
-#    [output.rabbitmq]
-#    enabled : true
+#     rabbitmq:
+#       enabled : true
 
 
 

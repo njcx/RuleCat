@@ -74,17 +74,25 @@ func init() {
 	if err != nil {
 		log2.Error.Fatalf("Unmarshal yml file err: %v ", err)
 	}
-	emailSender, err = email.New(ConfigG.OutPut.Email.EmailHost, ConfigG.OutPut.Email.EmailSmtpPort,
-		ConfigG.OutPut.Email.EmailUserName, ConfigG.OutPut.Email.EmailPwd)
-	if err != nil {
-		log2.Error.Fatalf("Create emailSender err: %v ", err)
+
+	if ConfigG.OutPut.Email.Enabled {
+		emailSender, err = email.New(ConfigG.OutPut.Email.EmailHost, ConfigG.OutPut.Email.EmailSmtpPort,
+			ConfigG.OutPut.Email.EmailUserName, ConfigG.OutPut.Email.EmailPwd)
+		if err != nil {
+			log2.Error.Fatalf("Create emailSender err: %v ", err)
+		}
 	}
-	kafkaP = kafka.InitKafkaProducer(ConfigG.OutPut.Kafka.Server,
-		ConfigG.OutPut.Kafka.GroupId, ConfigG.OutPut.Kafka.Topic)
-	esConf := es.ElasticConfig{Url: ConfigG.OutPut.Es.Server, Sniff: new(bool)}
-	esSvc, err = es.CreateElasticSearchService(esConf, ConfigG.OutPut.Es.Version)
-	if err != nil {
-		log2.Error.Fatalf("Create elastic search service err: %v ", err)
+	if ConfigG.OutPut.Kafka.Enabled {
+		kafkaP = kafka.InitKafkaProducer(ConfigG.OutPut.Kafka.Server,
+			ConfigG.OutPut.Kafka.GroupId, ConfigG.OutPut.Kafka.Topic)
+	}
+
+	if ConfigG.OutPut.Es.Enabled {
+		esConf := es.ElasticConfig{Url: ConfigG.OutPut.Es.Server, Sniff: new(bool)}
+		esSvc, err = es.CreateElasticSearchService(esConf, ConfigG.OutPut.Es.Version)
+		if err != nil {
+			log2.Error.Fatalf("Create elastic search service err: %v ", err)
+		}
 	}
 
 }
@@ -100,6 +108,7 @@ func SendMail(data *sync.Map) {
          <h4> Data:</h4>
          <pre id="out_pre"> {{.Json}} </pre>
          </body></html>`
+
 		type Args struct {
 			Data_ map[interface{}]interface{}
 			Json  template.HTML
