@@ -111,10 +111,38 @@ e-mail:                                   // 告警发送的邮箱
 
 
 
+目前支持四种输出：
+
+```bash
+
+output:
+    es:
+      enabled : true  
+      es_host : ["http://10.10.116.177:9201"]
+      version : 7
+
+    kafka:
+      enabled : true
+      server : ["172.21.129.2:9092"]
+      topic: nids-alert
+      group_id: nids-alert
 
 
+    email:
+      enabled: false
+      email_host: smtp.qq.com
+      email_smtp_port: 465
+      email_from: 123456@qq.com
+      email_username: 123456@qq.com
+      email_pwd: 123456
 
 
+    json:
+      enabled : true
+      path : /tmp/
+      name : nids-alert.log
+
+```
 
 
 
