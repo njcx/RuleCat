@@ -41,33 +41,5 @@ output:
 
 
 
-# input:
-#    rabbitmq:
-#      enabled : true
-#      server : "192.168.1.1"
-#      ports : [ 8001]
-
-
-#    redis:
-#      enabled : true
-#      server : "192.168.1.1"
-#      ports : 6379
-#      password : ""
-
-
-#
-# output:
-#     redis:
-#        enabled : true
-#        server : "192.168.1.1"
-#        ports : 6379
-#        password : ""
-
-#     rabbitmq:
-#       enabled : true
-
-
-
-
 
 

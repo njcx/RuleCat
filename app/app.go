@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"gopkg.in/yaml.v2"
 	"html/template"
-	"io/ioutil"
+	"os"
 	"rulecat/utils"
 	"rulecat/utils/email"
 	"rulecat/utils/es"
@@ -66,7 +66,8 @@ type Config struct {
 
 func init() {
 	var err error
-	configFile, err = ioutil.ReadFile(utils.GetCurrentPath() + "/etc/config.yml")
+	utils.ServerBanner()
+	configFile, err = os.ReadFile(utils.GetCurrentPath() + "/etc/config.yml")
 	if err != nil {
 		log2.Error.Fatalf("Get yml file err %v ", err)
 	}

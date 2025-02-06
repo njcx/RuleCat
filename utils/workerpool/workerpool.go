@@ -1,12 +1,9 @@
 package workerpool
 
-//test-bjhoaxodzdiijheb
-// --------------------------- Job ---------------------
 type Job interface {
 	Do() error
 }
 
-// --------------------------- Worker ---------------------
 type Worker struct {
 	JobQueue chan Job
 }
@@ -29,7 +26,6 @@ func (w Worker) Run(wq chan chan Job) {
 	}()
 }
 
-// --------------------------- WorkerPool ---------------------
 type WorkerPool struct {
 	workerlen   int
 	JobQueue    chan Job

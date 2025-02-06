@@ -4,6 +4,7 @@ import (
 	"bytes"
 	Json "encoding/json"
 	"fmt"
+	"github.com/dimiro1/banner"
 	"github.com/json-iterator/go"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -149,4 +150,17 @@ func IsDir(path string) (os.FileInfo, bool) {
 func IsFile(path string) (os.FileInfo, bool) {
 	f, flag := IsExists(path)
 	return f, flag && !f.IsDir()
+}
+
+func ServerBanner() {
+	template := `
+{{ .Title "RuleCat" "" 4 }}
+GoVersion: {{ .GoVersion }}
+GOOS: {{ .GOOS }}
+GOARCH: {{ .GOARCH }}
+NumCPU: {{ .NumCPU }}
+Now: {{ .Now "2006-01-02 15:04:05" }}
+	
+`
+	banner.InitString(os.Stdout, true, true, template)
 }
