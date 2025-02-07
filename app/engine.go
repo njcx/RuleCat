@@ -1,11 +1,10 @@
 package app
 
 import (
-	"github.com/json-iterator/go"
+	jsoniter "github.com/json-iterator/go"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"regexp"
-	"rulecat/app/customf"
 	"rulecat/utils"
 	"rulecat/utils/cache"
 	"rulecat/utils/json"
@@ -33,7 +32,7 @@ func NewEngine(ruleType string) *engine {
 
 func (e *engine) ReadRules() {
 	var rulesPath []string
-	rulesListPath, err := utils.GetAllFile(utils.GetCurrentPath()+"/etc/rules/"+e.RuleType, rulesPath)
+	rulesListPath, err := utils.GetAllFile(utils.GetCurrentPath()+"/etc/"+e.RuleType+"_rules", rulesPath)
 	if err != nil {
 		log2.Error.Fatalf("Get rule file dir err %s  %v ", rulesListPath, err)
 	}
@@ -61,7 +60,6 @@ func (e *engine) ResCheck(threadNum int, outPut chan *sync.Map) {
 		for {
 			sc := &engine{Json: <-e.InPutC, OutPutC: outPut}
 			p.JobQueue <- sc
-
 		}
 	}()
 }
@@ -76,6 +74,7 @@ func RuleCheckFuc(s string, r []map[interface{}]interface{}, outPut chan *sync.M
 	for _, rule := range r {
 		if rule["state"] == "enable" {
 			var detectList int
+			var infoMap map[string]string
 			for _, detectItem := range rule["detect_list"].([]interface{}) {
 				if detectItem.(map[interface{}]interface{})["type"] == "equal" {
 					if json.Get(s, detectItem.(map[interface{}]interface{})["field"].(string)).String() ==
@@ -98,10 +97,12 @@ func RuleCheckFuc(s string, r []map[interface{}]interface{}, outPut chan *sync.M
 				}
 
 				if detectItem.(map[interface{}]interface{})["type"] == "customf" {
-					handelf := customf.HandleMap[detectItem.(map[interface{}]interface{})["rule"].(string)]
-					if handelf(json.Get(s, detectItem.(map[interface{}]interface{})["field"].(string)).String()) {
+					handelf := HandleMap[detectItem.(map[interface{}]interface{})["rule"].(string)]
+					successHit, tmpMap := handelf(json.Get(s, detectItem.(map[interface{}]interface{})["field"].(string)).String())
+					if successHit {
 						detectList++
 					}
+					infoMap = tmpMap
 				}
 			}
 			if rule["rule_type"] == "and" {
@@ -110,6 +111,7 @@ func RuleCheckFuc(s string, r []map[interface{}]interface{}, outPut chan *sync.M
 					_ = Json1.Unmarshal([]byte(s), &tmpMap)
 					sMap, _ := utils.MapToSMap(rule)
 					sMap.Store("data", tmpMap)
+					sMap.Store("extra_message", infoMap)
 					outPut <- sMap
 				}
 			}
@@ -119,6 +121,7 @@ func RuleCheckFuc(s string, r []map[interface{}]interface{}, outPut chan *sync.M
 					_ = Json1.Unmarshal([]byte(s), &tmpMap)
 					sMap, _ := utils.MapToSMap(rule)
 					sMap.Store("data", tmpMap)
+					sMap.Store("extra_message", infoMap)
 					outPut <- sMap
 				}
 			}
@@ -131,8 +134,8 @@ func RuleCheckFuc(s string, r []map[interface{}]interface{}, outPut chan *sync.M
 							_ = Json1.Unmarshal([]byte(s), &tmpMap)
 							sMap, _ := utils.MapToSMap(rule)
 							sMap.Store("data", tmpMap)
+							sMap.Store("extra_message", infoMap)
 							outPut <- sMap
-
 						} else {
 							_ = Tc.Increment(json.Get(s, rule["key"].(string)).String(), 1)
 						}
@@ -151,6 +154,7 @@ func RuleCheckFuc(s string, r []map[interface{}]interface{}, outPut chan *sync.M
 							_ = Json1.Unmarshal([]byte(s), &tmpMap)
 							sMap, _ := utils.MapToSMap(rule)
 							sMap.Store("data", tmpMap)
+							sMap.Store("extra_message", infoMap)
 							outPut <- sMap
 						} else {
 							_ = Tc.Increment(json.Get(s, rule["key"].(string)).String(), 1)

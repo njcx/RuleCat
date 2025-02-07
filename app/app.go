@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"html/template"
 	"os"
+	"path/filepath"
 	"rulecat/utils"
 	"rulecat/utils/email"
 	"rulecat/utils/es"
@@ -27,6 +28,8 @@ type Input struct {
 		Server  []string `yaml:"server"`
 		Topic   string   `yaml:"topic"`
 		GroupId string   `yaml:"group_id"`
+		User    string   `yaml:"user"`
+		Passwd  string   `yaml:"passwd"`
 	}
 }
 
@@ -35,13 +38,18 @@ type Output struct {
 		Enabled bool     `yaml:"enabled"`
 		Server  []string `yaml:"es_host"`
 		Version int      `yaml:"version"`
+		User    string   `yaml:"user"`
+		Passwd  string   `yaml:"passwd"`
 	}
 	Kafka struct {
 		Enabled bool     `yaml:"enabled"`
 		Server  []string `yaml:"server"`
 		Topic   string   `yaml:"topic"`
 		GroupId string   `yaml:"group_id"`
+		User    string   `yaml:"user"`
+		Passwd  string   `yaml:"passwd"`
 	}
+
 	Json struct {
 		Enabled bool   `yaml:"enabled"`
 		Path    string `yaml:"path"`
@@ -85,17 +93,21 @@ func init() {
 	}
 	if ConfigG.OutPut.Kafka.Enabled {
 		kafkaP = kafka.InitKafkaProducer(ConfigG.OutPut.Kafka.Server,
-			ConfigG.OutPut.Kafka.GroupId, ConfigG.OutPut.Kafka.Topic)
+			ConfigG.OutPut.Kafka.GroupId, ConfigG.OutPut.Kafka.Topic,
+			ConfigG.OutPut.Kafka.User, ConfigG.OutPut.Kafka.Passwd)
+
 	}
 
 	if ConfigG.OutPut.Es.Enabled {
-		esConf := es.ElasticConfig{Url: ConfigG.OutPut.Es.Server, Sniff: new(bool)}
+		esConf := es.ElasticConfig{Url: ConfigG.OutPut.Es.Server,
+			User:   ConfigG.OutPut.Es.User,
+			Secret: ConfigG.OutPut.Es.Passwd,
+			Sniff:  new(bool)}
 		esSvc, err = es.CreateElasticSearchService(esConf, ConfigG.OutPut.Es.Version)
 		if err != nil {
 			log2.Error.Fatalf("Create elastic search service err: %v ", err)
 		}
 	}
-
 }
 
 func SendMail(data *sync.Map) {
@@ -159,7 +171,23 @@ func SendEs(typeName string, namespace string, sinkData string) {
 
 func SendJson(message []byte) {
 	if ConfigG.OutPut.Json.Enabled {
-		filePath := ConfigG.OutPut.Json.Path + ConfigG.OutPut.Json.Name
-		utils.WriteFile(filePath, string(message)+"\n")
+		filePath := filepath.Join(ConfigG.OutPut.Json.Path, ConfigG.OutPut.Json.Name)
+
+		// 确保目录存在
+		dir := filepath.Dir(filePath)
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			log2.Error.Printf("Failed to create directory: %v", err)
+			return
+		}
+
+		// 写入文件并检查错误
+		err = utils.WriteFile(filePath, string(message)+"\n")
+		if err != nil {
+			log2.Error.Printf("Failed to write to file %s: %v", filePath, err)
+			return
+		}
+
+		log2.Info.Printf("Successfully wrote message to file %s", filePath)
 	}
 }

@@ -29,7 +29,6 @@ func init() {
 	if err != nil {
 		log.Fatalf("打开日志文件失败: %v", err)
 	}
-	defer errFile.Close()
 
 	Info = log.New(io.MultiWriter(os.Stdout, errFile), "Info:", log.Ldate|log.Ltime|log.Lshortfile)
 	Warning = log.New(io.MultiWriter(os.Stdout, errFile), "Warning:", log.Ldate|log.Ltime|log.Lshortfile)

@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	ESIndex = "nids"
+	ESIndex = "index"
 )
 
 type UnsupportedVersion struct{}
@@ -46,7 +46,7 @@ func (esSvc *ElasticSearchService) Index(typeName string, namespace string) (str
 
 	indexName := fmt.Sprintf("%s-%s", esSvc.baseIndex, dateStr)
 	if len(namespace) > 0 {
-		indexName = fmt.Sprintf("%s-%s-%s", esSvc.baseIndex, namespace, dateStr)
+		indexName = fmt.Sprintf("%s-%s", namespace, dateStr)
 	}
 
 	if typeName == "" {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"rulecat/app"
@@ -11,10 +10,11 @@ import (
 	log2 "rulecat/utils/log"
 	"sync"
 	"syscall"
+	"time"
 )
 
 func main() {
-	topic := [...]string{"topic_tpl", "topic_tpl1"}
+	topic := [...]string{"topic_tpl", "topic_tpl2"}
 	outPut := make(chan *sync.Map, 48)
 	var wg sync.WaitGroup
 	ctx, cancel := context.WithCancel(context.Background())
@@ -30,9 +30,9 @@ func main() {
 	}()
 
 	for i, topicItem := range topic {
-		wg.Add(7)
+
 		kafkaC := kafka.InitKakfaConsumer(app.ConfigG.InPut.Kafka.Server, app.ConfigG.InPut.Kafka.GroupId,
-			[]string{"nids-" + topicItem})
+			[]string{topicItem}, app.ConfigG.InPut.Kafka.User, app.ConfigG.InPut.Kafka.Passwd)
 		kafkaConsumers[i] = kafkaC
 		if err := kafkaC.Open(); err != nil {
 			log2.Error.Printf("Failed to open Kafka consumer for topic %s: %v", topicItem, err)
@@ -41,9 +41,10 @@ func main() {
 		}
 		e := app.NewEngine(topicItem)
 		e.ReadRules()
+		wg.Add(7)
 
 		for j := 0; j < 5; j++ {
-			go func() {
+			go func(j int) {
 				defer wg.Done()
 				for {
 					select {
@@ -54,7 +55,7 @@ func main() {
 						e.InPutC <- string(message.Value)
 					}
 				}
-			}()
+			}(j)
 		}
 		go func() {
 			defer wg.Done()
@@ -68,9 +69,10 @@ func main() {
 				case <-ctx.Done():
 					return
 				case dataStr := <-outPut:
+
 					JsonByte, _ := utils.MarshalSMapToJSON(dataStr)
 					app.SendKafka(JsonByte)
-					app.SendEs("nids", "alert", string(JsonByte))
+					app.SendEs("_doc", "index_tpl", string(JsonByte))
 					app.SendMail(dataStr)
 					app.SendJson(JsonByte)
 				}
@@ -78,16 +80,32 @@ func main() {
 		}()
 
 	}
-	interrupt := make(chan os.Signal, 1)
+	interrupt := make(chan os.Signal, 2)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+
+	defer func() {
+		signal.Stop(interrupt)
+	}()
+
 	for {
 		select {
 		case killSignal := <-interrupt:
-			fmt.Println("Main app got signal:", killSignal)
+			log2.Info.Printf("Main app got signal: %v", killSignal)
 			log2.Info.Printf("Main app is shutting down due to signal: %v", killSignal)
 			cancel()
-			wg.Wait()
-			return
+			timeout := time.After(5 * time.Second)
+			done := make(chan struct{})
+			go func() {
+				wg.Wait()
+				close(done)
+			}()
+			select {
+			case <-done:
+				return
+			case <-timeout:
+				log2.Warning.Println("Shutdown timeout exceeded, forcing exit.")
+				return
+			}
 		}
 	}
 }

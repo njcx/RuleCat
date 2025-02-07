@@ -14,9 +14,11 @@ type Consumer struct {
 	address       []string
 	group         string
 	topic         []string
+	user          string
+	password      string
 }
 
-func createConsumerCluster(kafkaAddrs []string, kafkaGroup string) *kafka.Consumer {
+func createConsumerCluster(kafkaAddrs []string, kafkaGroup string, user string, password string) *kafka.Consumer {
 	config := kafka.ConfigMap{
 		"bootstrap.servers":       strings.Join(kafkaAddrs, ","),
 		"group.id":                kafkaGroup,
@@ -24,6 +26,10 @@ func createConsumerCluster(kafkaAddrs []string, kafkaGroup string) *kafka.Consum
 		"auto.commit.interval.ms": 1000,
 		"session.timeout.ms":      30000,
 		"socket.keepalive.enable": true,
+		"sasl.mechanisms":         "PLAIN",
+		"security.protocol":       "SASL_PLAINTEXT",
+		"sasl.username":           user,
+		"sasl.password":           password,
 	}
 	c, err := kafka.NewConsumer(&config)
 	if err != nil {
@@ -32,12 +38,13 @@ func createConsumerCluster(kafkaAddrs []string, kafkaGroup string) *kafka.Consum
 	return c
 }
 
-func InitKakfaConsumer(kafkaAddrs []string, kafkaGroup string, topic []string) *Consumer {
+func InitKakfaConsumer(kafkaAddrs []string, kafkaGroup string, topic []string, user string, password string) *Consumer {
+
 	c := new(Consumer)
 	c.address = kafkaAddrs
 	c.group = kafkaGroup
 	c.topic = topic
-	c.kafkaConsumer = createConsumerCluster(kafkaAddrs, kafkaGroup)
+	c.kafkaConsumer = createConsumerCluster(kafkaAddrs, kafkaGroup, user, password)
 	return c
 }
 
@@ -72,7 +79,7 @@ func (c *Consumer) runPooler() {
 				log.Fatalln("Error: Cannot drain pool to close consumer, hard stop.")
 			}
 			c.kafkaConsumer.Close()
-			c.kafkaConsumer = createConsumerCluster(c.address, c.group)
+			c.kafkaConsumer = createConsumerCluster(c.address, c.group, c.user, c.password)
 			err := c.kafkaConsumer.SubscribeTopics(c.topic, nil)
 			if err != nil {
 				log.Fatalln("Fatal, cannot recover from", err)

@@ -1,0 +1,20 @@
+state: enable
+rule_id : DNS命中威胁情报_ID_01
+rule_tag: dns-threat
+rule_name: DNS命中威胁情报
+rule_type: or
+
+detect_list:
+
+  - field: dns.rrname
+    type: customf
+    rule: CheckDNS
+
+
+threat_level : high
+auth : njcx
+info : about sql injection attack
+
+e-mail:
+  - njcx91@tom.com
+  - njcx91@tom.com

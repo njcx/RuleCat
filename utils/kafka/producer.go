@@ -16,14 +16,21 @@ type DataProducer struct {
 	address  []string
 	group    string
 	topic    string
+	user     string
+	password string
+
 	producer *kafka.Producer
 }
 
-func CreateProducer(kafkaAddrs []string, kafkaGroup string) *kafka.Producer {
+func CreateProducer(kafkaAddrs []string, kafkaGroup string, user string, password string) *kafka.Producer {
 	c, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers":  strings.Join(kafkaAddrs, ","),
 		"group.id":           kafkaGroup,
 		"session.timeout.ms": 30000,
+		"sasl.mechanisms":    "PLAIN",
+		"security.protocol":  "SASL_PLAINTEXT",
+		"sasl.username":      user,
+		"sasl.password":      password,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -57,12 +64,15 @@ func (pd *DataProducer) AddMessage(message []byte) error {
 
 }
 
-func InitKafkaProducer(kafkaAddrs []string, kafkaGroup string, topic string) *DataProducer {
+func InitKafkaProducer(kafkaAddrs []string, kafkaGroup string, topic string, user string, password string) *DataProducer {
 
 	pd := new(DataProducer)
 	pd.address = kafkaAddrs
 	pd.group = kafkaGroup
 	pd.topic = topic
+
+	pd.user = user
+	pd.password = password
 	pd.Open()
 	return pd
 }
@@ -77,7 +87,7 @@ func (pd *DataProducer) Open() error {
 	if pd.group == "" {
 		return errors.New("invalid group")
 	}
-	pd.producer = CreateProducer(pd.address, pd.group)
+	pd.producer = CreateProducer(pd.address, pd.group, pd.user, pd.password)
 	pd.IsOpen = true
 	return nil
 }
