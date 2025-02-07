@@ -26,7 +26,6 @@ type Input struct {
 	Kafka struct {
 		Enabled bool     `yaml:"enabled"`
 		Server  []string `yaml:"server"`
-		Topic   string   `yaml:"topic"`
 		GroupId string   `yaml:"group_id"`
 		User    string   `yaml:"user"`
 		Passwd  string   `yaml:"passwd"`
@@ -180,8 +179,6 @@ func SendJson(message []byte) {
 			log2.Error.Printf("Failed to create directory: %v", err)
 			return
 		}
-
-		// 写入文件并检查错误
 		err = utils.WriteFile(filePath, string(message)+"\n")
 		if err != nil {
 			log2.Error.Printf("Failed to write to file %s: %v", filePath, err)

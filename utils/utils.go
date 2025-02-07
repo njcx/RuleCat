@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"github.com/dimiro1/banner"
 	"github.com/json-iterator/go"
-	"io/ioutil"
-	"log"
 	"os"
+	log2 "rulecat/utils/log"
 	"strings"
 	"sync"
 )
@@ -18,15 +17,15 @@ var json = jsoniter.ConfigCompatibleWithStandardLibrary
 func GetCurrentPath() string {
 	dir, err := os.Getwd()
 	if err != nil {
-		log.Fatalln(err)
+		log2.Error.Fatalln(err)
 	}
 	return strings.Replace(dir, "\\", "/", -1)
 }
 
 func GetAllFile(pathname string, s []string) ([]string, error) {
-	rd, err := ioutil.ReadDir(pathname)
+	rd, err := os.ReadDir(pathname)
 	if err != nil {
-		fmt.Println("read dir fail:", err)
+		log2.Error.Println("read dir fail:", err)
 		return s, err
 	}
 	for _, fi := range rd {
@@ -34,7 +33,7 @@ func GetAllFile(pathname string, s []string) ([]string, error) {
 			fullDir := pathname + "/" + fi.Name()
 			s, err = GetAllFile(fullDir, s)
 			if err != nil {
-				fmt.Println("read dir fail:", err)
+				log2.Error.Println("read dir fail:", err)
 				return s, err
 			}
 		} else {
@@ -132,18 +131,18 @@ func WriteFile(path string, str string) error {
 	}
 
 	if err != nil {
-		log.Printf("Failed to open/create file: %v", err)
+		log2.Error.Printf("Failed to open/create file: %v", err)
 		return err
 	}
 	defer func() {
 		if cerr := f.Close(); cerr != nil {
-			log.Printf("Failed to close file: %v", cerr)
+			log2.Error.Printf("Failed to close file: %v", cerr)
 		}
 	}()
 
 	_, err = f.WriteString(str)
 	if err != nil {
-		log.Printf("Failed to write to file: %v", err)
+		log2.Error.Printf("Failed to write to file: %v", err)
 		return err
 	}
 

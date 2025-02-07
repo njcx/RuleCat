@@ -3,7 +3,7 @@ package kafka
 import (
 	"errors"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"log"
+	log2 "rulecat/utils/log"
 	"strings"
 )
 
@@ -33,7 +33,7 @@ func createConsumerCluster(kafkaAddrs []string, kafkaGroup string, user string, 
 	}
 	c, err := kafka.NewConsumer(&config)
 	if err != nil {
-		log.Fatal(err)
+		log2.Error.Fatal(err)
 	}
 	return c
 }
@@ -69,23 +69,23 @@ func (c *Consumer) runPooler() {
 				c.Message <- msg
 			}
 		case kafka.Error:
-			log.Printf("%% Error: %v\n", msg)
+			log2.Error.Printf("%% Error: %v\n", msg)
 			c.IsOpen = false
 			var count = 0
 			for c.kafkaConsumer.Poll(10) != nil && count < 100 {
 				count++
 			}
 			if count == 100 {
-				log.Fatalln("Error: Cannot drain pool to close consumer, hard stop.")
+				log2.Error.Fatalln("Error: Cannot drain pool to close consumer, hard stop.")
 			}
 			c.kafkaConsumer.Close()
 			c.kafkaConsumer = createConsumerCluster(c.address, c.group, c.user, c.password)
 			err := c.kafkaConsumer.SubscribeTopics(c.topic, nil)
 			if err != nil {
-				log.Fatalln("Fatal, cannot recover from", err)
+				log2.Error.Fatalln("Fatal, cannot recover from", err)
 			}
 			c.IsOpen = true
-			log.Printf("Recovered, resuming listening.")
+			log2.Error.Printf("Recovered, resuming listening.")
 		default:
 			// do nothing, ignore the message.
 		}
@@ -98,7 +98,7 @@ func (c *Consumer) Refresh() error {
 	}
 	err := c.kafkaConsumer.SubscribeTopics(c.topic, nil)
 	if err != nil {
-		log.Println("Error listening to  topic", err)
+		log2.Error.Println("Error listening to  topic", err)
 	}
 	return err
 }
@@ -115,7 +115,7 @@ func (c *Consumer) Open() error {
 	}
 	err := c.kafkaConsumer.SubscribeTopics(c.topic, nil)
 	if err != nil {
-		log.Println("Error listening to topics", err)
+		log2.Error.Println("Error listening to topics", err)
 	}
 	c.Message = make(chan *kafka.Message)
 	c.IsOpen = true

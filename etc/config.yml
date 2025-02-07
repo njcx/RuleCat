@@ -10,7 +10,6 @@ input:
     server : ["10.210.228.22:9092"]
     user : "user"
     passwd : "passwd"
-    topic: test
     group_id: nids_input_4
 
 

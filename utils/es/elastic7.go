@@ -5,6 +5,7 @@ import (
 	"fmt"
 	elastic7 "github.com/olivere/elastic/v7"
 	"github.com/pborman/uuid"
+	log2 "rulecat/utils/log"
 	"time"
 )
 
@@ -104,10 +105,10 @@ func (es *Elastic7Wrapper) AddBodyJson(index, typeName string, data interface{})
 		BodyJson(data).
 		Do(context.Background())
 	if err != nil {
-		fmt.Println("Failed to indexed data: %v", err)
+		log2.Error.Println("Failed to indexed data: %v", err)
 		return err
 	}
-	fmt.Printf("Indexed data %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
+	log2.Info.Printf("Indexed data %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
 	return nil
 }
 
@@ -119,10 +120,10 @@ func (es *Elastic7Wrapper) AddBodyString(index, typeName string, data string) er
 		BodyString(data).
 		Do(context.Background())
 	if err != nil {
-		fmt.Println("Failed to indexed data: %v", err)
+		log2.Error.Println("Failed to indexed data: %v", err)
 		return err
 	}
-	fmt.Printf("Indexed data %s to index %s, type %s\n", put2.Id, put2.Index, put2.Type)
+	log2.Info.Printf("Indexed data %s to index %s, type %s\n", put2.Id, put2.Index, put2.Type)
 	return nil
 }
 
@@ -135,7 +136,7 @@ func bulkAfterCBV7(_ int64, _ []elastic7.BulkableRequest, response *elastic7.Bul
 		for _, list := range response.Items {
 			for name, itm := range list {
 				if itm.Error != nil {
-					fmt.Println("Failed to execute bulk operation to ElasticSearch on %s: %v", name, itm.Error)
+					log2.Error.Println("Failed to execute bulk operation to ElasticSearch on %s: %v", name, itm.Error)
 				}
 			}
 		}

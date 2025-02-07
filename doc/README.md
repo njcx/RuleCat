@@ -92,30 +92,34 @@ e-mail:                                   // 告警发送的邮箱
 ```bash
 
 output:
-    es:
-      enabled : true  
-      es_host : ["http://10.10.116.177:9201"]
-      version : 7
+  es:
+    enabled : true
+    es_host : ["http://10.210.228.22:9201", "http://10.210.228.52:9201"]
+    version : 7
+    user : "elastic"
+    passwd : "elastic"
 
-    kafka:
-      enabled : true
-      server : ["172.21.129.2:9092"]
-      topic: nids-alert
-      group_id: nids-alert
-
-
-    email:
-      enabled: false
-      email_host: smtp.qq.com
-      email_smtp_port: 465
-      email_from: 123456@qq.com
-      email_username: 123456@qq.com
-      email_pwd: 123456
+  kafka:
+    enabled : true
+    server : ["10.210.228.22:9092"]
+    user : "producer"
+    passwd : "producer"
+    topic: test22
+    group_id: test4
 
 
-    json:
-      enabled : true
-      path : /tmp/
-      name : nids-alert.log
+  email:
+    enabled: false
+    email_host: smtp.qq.com
+    email_smtp_port: 465
+    email_from: 123456@qq.com
+    email_username: 123456@qq.com
+    email_pwd: 123456
+
+
+  json:
+    enabled : true
+    path : /Users/njcx/RuleCat/logs/
+    name : alert.log
 
 ```

@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"rulecat/utils"
+	"strings"
 )
 
 var (
@@ -15,19 +15,21 @@ var (
 )
 
 func init() {
-	logFilePath := filepath.Join(utils.GetCurrentPath(), "logs", "rulecat.log")
+
+	dir, _ := os.Getwd()
+	currentPath := strings.Replace(dir, "\\", "/", -1)
+	logFilePath := filepath.Join(currentPath, "logs", "rulecat.log")
 	logDir := filepath.Dir(logFilePath)
 
-	// 检查并创建目录
 	if _, err := os.Stat(logDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(logDir, 0755); err != nil {
-			log.Fatalf("创建日志目录失败: %v", err)
+			log.Fatalf("Create log dir err: %v", err)
 		}
 	}
 
 	errFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
-		log.Fatalf("打开日志文件失败: %v", err)
+		log.Fatalf("Open log file err: %v", err)
 	}
 
 	Info = log.New(io.MultiWriter(os.Stdout, errFile), "Info:", log.Ldate|log.Ltime|log.Lshortfile)

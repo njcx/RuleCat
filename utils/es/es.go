@@ -3,6 +3,7 @@ package es
 import (
 	"errors"
 	"fmt"
+	log2 "rulecat/utils/log"
 	"time"
 )
 
@@ -99,7 +100,7 @@ func (esSvc *ElasticSearchService) FlushData() error {
 func (esSvc *ElasticSearchService) SaveData(typeName string, namespace string, sinkData []interface{}) error {
 	indexName, err := esSvc.Index(typeName, namespace)
 	if err != nil {
-		fmt.Println(err)
+		log2.Error.Println(err)
 		return err
 	}
 	for _, data := range sinkData {
@@ -111,7 +112,7 @@ func (esSvc *ElasticSearchService) SaveData(typeName string, namespace string, s
 func (esSvc *ElasticSearchService) AddBodyJson(typeName, namespace string, sinkData interface{}) error {
 	indexName, err := esSvc.Index(typeName, namespace)
 	if err != nil {
-		fmt.Println(err)
+		log2.Error.Println(err)
 		return err
 	}
 	return esSvc.EsClient.AddBodyJson(indexName, typeName, sinkData)
@@ -120,7 +121,7 @@ func (esSvc *ElasticSearchService) AddBodyJson(typeName, namespace string, sinkD
 func (esSvc *ElasticSearchService) AddBodyString(typeName, namespace string, sinkData string) error {
 	indexName, err := esSvc.Index(typeName, namespace)
 	if err != nil {
-		fmt.Println(err)
+		log2.Error.Println(err)
 		return err
 	}
 	return esSvc.EsClient.AddBodyString(indexName, typeName, sinkData)

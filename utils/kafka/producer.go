@@ -2,10 +2,10 @@ package kafka
 
 import (
 	"errors"
-	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/json-iterator/go"
 	"log"
+	log2 "rulecat/utils/log"
 	"strings"
 )
 
@@ -45,9 +45,9 @@ func (pd *DataProducer) AddMessage(message []byte) error {
 			switch ev := e.(type) {
 			case *kafka.Message:
 				if ev.TopicPartition.Error != nil {
-					fmt.Printf("Kafka Delivery failed: %v\n", ev.TopicPartition)
+					log2.Error.Printf("Kafka Delivery failed: %v\n", ev.TopicPartition)
 				} else {
-					fmt.Printf("Kafka Delivered message to %v\n", ev.TopicPartition)
+					log2.Info.Printf("Kafka Delivered message to %v\n", ev.TopicPartition)
 				}
 			}
 		}
