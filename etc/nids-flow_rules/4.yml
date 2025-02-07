@@ -11,9 +11,9 @@ detect_list:
     rule: xxx
     ignore-case: false
 
-  - field : network.ip
+  - field : proto
     type: equal
-    rule : xxx
+    rule : ICMP
 
   - field : network.ip,
     type: in
@@ -22,7 +22,7 @@ detect_list:
 key : network.ip
 
 time_interval:
-   second: 10
+   second: 100
    times: 100
 
 

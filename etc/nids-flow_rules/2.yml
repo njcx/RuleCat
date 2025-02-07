@@ -13,11 +13,15 @@ detect_list:
 
   - field : proto
     type: equal
-    rule : ICMP
+    rule : xxx
 
   - field : network.ip,
     type: in
     rule : xxx
+
+  - field: proto
+    type: customf
+    rule: CheckProto
 
 
 threat_level : high

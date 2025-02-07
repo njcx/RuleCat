@@ -40,7 +40,6 @@ func (e *engine) ReadRules() {
 	}
 	for _, ruleFile := range rulesListPath {
 		rule, err := os.ReadFile(ruleFile)
-
 		if err != nil {
 			log2.Error.Fatalf("Get rule file err  %s %v ", rule, err)
 		}
@@ -161,7 +160,6 @@ func ConvertMap(inputMap map[interface{}]interface{}) (map[string]interface{}, e
 
 func convertToMapSlice(slice []interface{}) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, len(slice))
-
 	for _, item := range slice {
 		if m, ok := item.(map[interface{}]interface{}); ok {
 			convertedMap, err := ConvertMap(m)
@@ -174,7 +172,6 @@ func convertToMapSlice(slice []interface{}) []map[string]interface{} {
 			fmt.Printf("Skipping invalid element: %v (type: %T)\n", item, item)
 		}
 	}
-
 	return result
 }
 
@@ -184,7 +181,6 @@ func checkDetectList(s string, rule map[string]interface{}) (int, map[string]str
 	for _, detectItem := range convertToMapSlice(rule["detect_list"].([]interface{})) {
 		field := detectItem["field"].(string)
 		value := json.Get(s, field).String()
-
 		switch detectItem["type"].(string) {
 		case "equal":
 			if value == interfaceToString(detectItem["rule"]) {
@@ -217,7 +213,6 @@ func checkDetectList(s string, rule map[string]interface{}) (int, map[string]str
 					detectList++
 				}
 			}
-
 		case "customf":
 			handelFuc := HandleMap[detectItem["rule"].(string)]
 			successHit, tmpMap := handelFuc(value)
@@ -260,9 +255,9 @@ func sendResult(s string, rule map[string]interface{}, infoMap map[string]string
 }
 
 func handleFrequency(key string, rule map[string]interface{}, s string, infoMap map[string]string, outPut chan *sync.Map) {
-	times := rule["time_interval"].(map[string]int)["times"]
-	second := rule["time_interval"].(map[string]int)["second"]
-
+	FrequencyMap, _ := ConvertMap(rule["time_interval"].(map[interface{}]interface{}))
+	times := FrequencyMap["times"].(int)
+	second := FrequencyMap["second"].(int)
 	value, found := Tc.Get(key)
 	if found {
 		if value.(int) >= times {

@@ -11,19 +11,19 @@ detect_list:
     rule: xxx
     ignore-case: false
 
-  - field : network.ip
+  - field : proto
     type: equal
-    rule : xxx
+    rule : ICMP
 
   - field : network.ip,
     type: in
     rule : xxx
 
-key : network.ip
+key : proto
 
 time_interval:
-   second: 10
-   times: 100
+   second: 100
+   times: 500
 
 
 threat_level : high

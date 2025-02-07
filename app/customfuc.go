@@ -45,6 +45,7 @@ func init() {
 
 	RegisterHandler("CheckIP", CheckIP)
 	RegisterHandler("CheckDNS", CheckDNS)
+	RegisterHandler("CheckProto", CheckProto)
 }
 
 func RegisterHandler(name string, handler func(interface{}) (bool, map[string]string)) {
@@ -97,4 +98,19 @@ func CheckDNS(dns interface{}) (bool, map[string]string) {
 		}
 	}
 	return false, nil
+}
+
+func CheckProto(proto interface{}) (bool, map[string]string) {
+
+	protocolStr, ok := proto.(string)
+	if !ok {
+		return false, nil
+	}
+	if protocolStr == "UDP" {
+		return true, map[string]string{
+			"pro_tag": protocolStr,
+		}
+	}
+	return false, nil
+
 }

@@ -8,8 +8,8 @@ input:
   kafka:
     enabled : true
     server : ["10.210.228.22:9092"]
-    user : "producer"
-    passwd : "producer"
+    user : "user"
+    passwd : "kafka_passwd"
     group_id: kafka_input_group_id
 
 
