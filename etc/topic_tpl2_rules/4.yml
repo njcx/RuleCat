@@ -9,7 +9,7 @@ detect_list:
   - field : network.ip
     type: re
     rule: xxx
-    ignorecase: false
+    ignore-case: false
 
   - field : network.ip
     type: equal

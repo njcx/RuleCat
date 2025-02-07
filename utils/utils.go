@@ -92,7 +92,7 @@ func MarshalSMapToJSON(m *sync.Map) ([]byte, error) {
 	return data, nil
 }
 
-func MapToSMap(tmpMap map[interface{}]interface{}) (*sync.Map, error) {
+func MapToSMap(tmpMap map[string]interface{}) (*sync.Map, error) {
 
 	m := &sync.Map{}
 
@@ -112,9 +112,10 @@ func SMapToMap(tmpMap *sync.Map) map[interface{}]interface{} {
 	return m
 }
 
-func FormatJson(data []byte) string {
+func FormatJson(data interface{}) string {
 	var out bytes.Buffer
-	Json.Indent(&out, data, "", "    ")
+	data_, _ := Json.Marshal(data)
+	Json.Indent(&out, data_, "", "    ")
 	return out.String()
 }
 

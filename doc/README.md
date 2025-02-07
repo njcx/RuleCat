@@ -19,14 +19,14 @@ detect_list:
   - field : conn.conn_state              //  字段
     type: re                             //  正则
     rule: S0                             //  具体规则
-    ignorecase: false                    //  是否忽略大小写
+	ignore-case: false                   //  是否忽略大小写
 
   - field : conn.proto                   //  字段
     type: equal                          //  等于
     rule : tcp                           //  具体规则
 
   - field : conn.conn_state              // 字段
-    type: in                             // 判断是否为子串
+    type: in                             // 判断是否为子串, 是否在list里面
     rule : S0                            // 具体规则
  
   - field: conn.ip                       // 字段
@@ -113,7 +113,7 @@ output:
     email_host: smtp.qq.com
     email_smtp_port: 465
     email_from: 123456@qq.com
-    email_username: 123456@qq.com
+    email_username: 123456
     email_pwd: 123456
 
 

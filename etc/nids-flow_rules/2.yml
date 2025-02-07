@@ -2,7 +2,7 @@ state: enable
 rule_id : sqli_get_01
 rule_tag: sqli
 rule_name: sqli_get_select
-rule_type:  frequency_or   # frequency_and
+rule_type: or
 
 detect_list:
 
@@ -11,19 +11,13 @@ detect_list:
     rule: xxx
     ignore-case: false
 
-  - field : network.ip
+  - field : proto
     type: equal
-    rule : xxx
+    rule : ICMP
 
   - field : network.ip,
     type: in
     rule : xxx
-
-key : network.ip
-
-time_interval:
-   second: 10
-   times: 100
 
 
 threat_level : high
@@ -33,3 +27,4 @@ info : about sql injection attack
 e-mail:
     - njcx91@tom.com
     - njcx91@tom.com
+

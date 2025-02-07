@@ -73,7 +73,7 @@ func main() {
 					JsonByte, _ := utils.MarshalSMapToJSON(dataStr)
 					app.SendKafka(JsonByte)
 					app.SendEs("_doc", "index_tpl", string(JsonByte))
-					app.SendMail(dataStr)
+					app.SendMail(JsonByte)
 					app.SendJson(JsonByte)
 				}
 			}

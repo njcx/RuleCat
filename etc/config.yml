@@ -8,26 +8,26 @@ input:
   kafka:
     enabled : true
     server : ["10.210.228.22:9092"]
-    user : "user"
-    passwd : "passwd"
-    group_id: nids_input_4
+    user : "producer"
+    passwd : "producer"
+    group_id: kafka_input_group_id
 
 
 output:
   es:
-    enabled : true
+    enabled : false
     es_host : ["http://10.210.228.22:9201", "http://10.210.228.52:9201"]
     version : 7
     user : "elastic"
-    passwd : "elastic"
+    passwd : "es_passwd"
 
   kafka:
-    enabled : true
+    enabled : false
     server : ["10.210.228.22:9092"]
-    user : "producer"
-    passwd : "producer"
+    user : "user"
+    passwd : "kafka_passwd"
     topic: test22
-    group_id: test4
+    group_id: output_1
 
 
   email:
@@ -35,7 +35,7 @@ output:
     email_host: smtp.qq.com
     email_smtp_port: 465
     email_from: 123456@qq.com
-    email_username: 123456@qq.com
+    email_username: 123456
     email_pwd: 123456
 
 
